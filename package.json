@@ -1,7 +1,6 @@
 {
   "name": "code-samurai-assignment",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
@@ -13,5 +12,6 @@
     "express": "^4.19.1",
     "mongoose": "^8.2.3",
     "nodemon": "^3.1.0"
-  }
+  },
+  "description": ""
 }
