@@ -1,12 +1,20 @@
 
-const express = require('express')
-const app = express();
+const express = require('express');
+const bodyParser = require('body-parser'); 
+const mongoose = require("mongoose");
+const stsRoute = require('./routes/stsRouter.js');
 require("./databaseConCheck.js");
 
-app.get("/home", (req, res)=>{
-    res.send("home page");
-})
-app.listen(8000, () => {
-    console.log('8000 page listen')
-})
-//main branch...
+const app = express();
+
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
+
+// Define route for handling POST requests to /sts endpoint
+app.use('/sts', stsRoute);
+
+// Start the server
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
+});
