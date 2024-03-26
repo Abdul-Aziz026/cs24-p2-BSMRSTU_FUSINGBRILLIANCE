@@ -10,16 +10,23 @@
   "dependencies": {
     "body-parser": "^1.20.2",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
 =======
+=======
+>>>>>>> 6bd435a687b37b6fc71c3809e69e5881b665aeb4
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
 >>>>>>> abdul_aziz
     "mongoose": "^8.2.3",
     "nodemon": "^3.1.0",
+<<<<<<< HEAD
     "router": "^2.0.0-beta.2"
+=======
+    "route": "^0.2.5"
+>>>>>>> 6bd435a687b37b6fc71c3809e69e5881b665aeb4
   },
   "description": ""
 }
