@@ -14,6 +14,10 @@ app.get("/home", (req, res)=>{
 const vehicleRoute = require('./routes/vehiclesRoute.js');
 app.use('/vehicles', vehicleRoute);
 
+// vehicle route....
+const stsRoute = require('./routes/stsRoute.js');
+app.use('/sts', stsRoute);
+
 // waste collection route....
 const wasteCollectionRoute = require('./routes/waste_collectionRoute.js');
 app.use('/waste_collection', wasteCollectionRoute);
