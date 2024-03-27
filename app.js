@@ -16,11 +16,15 @@ app.get("/home", (req, res)=>{
     res.send("home page");
 })
 
+//user route...
+const UserRoute = require('./routes/userRoutes.js');
+app.use('/user' , UserRoute);
+
 // vehicle route....
 const vehicleRoute = require('./routes/vehiclesRoute.js');
 app.use('/vehicles', vehicleRoute);
 
-// vehicle route....
+// sts route....
 const stsRoutes = require('./routes/stsRouter.js');
 app.use('/sts', stsRoutes);
 
