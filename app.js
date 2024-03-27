@@ -8,17 +8,18 @@ const path = require('path');
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 // for serving public folder css file all place
-// app.use(express.static(path.join(__dirname, "/public")));
+app.use(express.static(path.join(__dirname, "/public")));
 
 app.use(bodyParser.json());
+app.use(express.urlencoded({extended: true}));
 
 app.get("/home", (req, res)=>{
-    res.send("home page");
+    res.render("login.ejs");
 })
 
 // //user route...
 const UserRoute = require('./routes/userRoutes.js');
-app.use('/user' , UserRoute);
+app.use('/auth' , UserRoute);
 
 // vehicle route....
 const vehicleRoute = require('./routes/vehiclesRoute.js');
