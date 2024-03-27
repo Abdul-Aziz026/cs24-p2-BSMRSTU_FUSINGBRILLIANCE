@@ -16,7 +16,7 @@ app.get("/home", (req, res)=>{
     res.send("home page");
 })
 
-//user route...
+// //user route...
 const UserRoute = require('./routes/userRoutes.js');
 app.use('/user' , UserRoute);
 
