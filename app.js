@@ -4,6 +4,12 @@ const app = express();
 const bodyParser = require('body-parser');
 require("./databaseConCheck.js");
 
+const path = require('path');
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/views"));
+// for serving public folder css file all place
+// app.use(express.static(path.join(__dirname, "/public")));
+
 app.use(bodyParser.json());
 
 app.get("/home", (req, res)=>{
@@ -15,8 +21,8 @@ const vehicleRoute = require('./routes/vehiclesRoute.js');
 app.use('/vehicles', vehicleRoute);
 
 // vehicle route....
-const stsRoute = require('./routes/stsRoute.js');
-app.use('/sts', stsRoute);
+const stsRoutes = require('./routes/stsRouter.js');
+app.use('/sts', stsRoutes);
 
 // waste collection route....
 const wasteCollectionRoute = require('./routes/waste_collectionRoute.js');
