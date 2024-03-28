@@ -60,10 +60,14 @@
         <h1>Forgot Password</h1>
         <form action="/auth/verifyOTP" method="post">
             <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" name="email" id="email" placeholder="E-mail" required>
+                <label for="email">Enter Email</label>
+                <input type="email" name="email" id="email" placeholder="enter email" required>
             </div>
-            <button type="submit">Send verification code</button>
+            <div class="form-group">
+                <label for="otp">Enter Correct OTP</label>
+                <input type="otp" name="otp" id="otp" placeholder="enter OTP" required>
+            </div>
+            <button type="submit">Verify OTP code</button>
         </form>
     </div>
 </body>

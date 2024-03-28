@@ -15,7 +15,13 @@ app.use(express.urlencoded({extended: true}));
 
 app.get("/home", (req, res)=>{
     res.render("login.ejs");
-})
+});
+
+// const mailsend= require('./routes/emailJsRoute.js');
+// app.use("/user", mailsend);
+
+// const mailSendRoute = require("./routes/emailSendRouter.js");
+// app.use('/user', mailSendRoute);
 
 // //user route...
 const UserRoute = require('./routes/userRoutes.js');
