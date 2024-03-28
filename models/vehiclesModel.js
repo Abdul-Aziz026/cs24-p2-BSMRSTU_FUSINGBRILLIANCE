@@ -13,9 +13,26 @@ const VechicleSchema = new Schema({
     availability:{
         type:Boolean,
         required:true
+    },
+    loaded: {
+        type: Number,
+        required: true
+    },
+    unloaded: {
+        type: Number,
+        required: true
     }
-    
-})
+});
+/*
+{
+    "vehicle_type": "Truck",
+    "capacity": 3,
+    "availability": true,
+    "loaded": 10,
+    "unloaded": 5
+}
+
+*/
 
 const Vehicle = mongoose.model('Vehicle' , VechicleSchema);
 module.exports = Vehicle;

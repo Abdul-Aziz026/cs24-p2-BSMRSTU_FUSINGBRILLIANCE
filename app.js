@@ -1,4 +1,4 @@
-
+const mongoose = require("mongoose");
 const express = require('express')
 const app = express();
 const bodyParser = require('body-parser');
@@ -13,8 +13,40 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: true}));
 
-app.get("/home", (req, res)=>{
-    res.render("login.ejs");
+
+const WasteCollection = require("./models/waste_collectionModel.js");
+const StsCollection = require("./models/stsModel.js");
+const vehicleCollection = require("./models/vehiclesModel.js");
+
+app.get("/home", async(req, res)=>{
+    // res.render("dashBoard.ejs");
+    const totWaste = await WasteCollection.find();
+    let totalWaste = 0, totalFuel = 0, totalCost = 0;
+    for (waste of totWaste) {
+        totalWaste += waste.waste_volume;
+        const sts = await StsCollection.find({sts_id: waste.sts_id});
+        console.log(sts);
+        let curDist = sts.gps_location.x + sts.gps_location.y ;
+        totalFuel += curDist;
+        const vehicle = await vehicleCollection.findById(vehicle_id);
+        console.log("vehicle : ", vehicle);
+        let curCost = 0;
+        if (vehicle.vehicle_type=="Truck") {
+            // 3 ton
+            curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 3;
+        }
+        else if (vehicle.vehicle_type=="Compactor") {
+            // 7 ton
+            curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 7;
+        }
+        else {
+            // 5 ton
+            curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 5;
+        }
+        totalCost += curCost * curDist;
+    }
+    console.log(totWaste);
+    res.render("dash.ejs", {totalWaste, totalFuel, totalCost});
 });
 
 // const mailsend= require('./routes/emailJsRoute.js');
