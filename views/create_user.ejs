@@ -1,0 +1,40 @@
+<% layout("/layouts/boilerplate.ejs") %>
+
+    <body>
+        <div class="container">
+            <h2>Create User</h2>
+            <form action="/users" method="POST">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select class="form-control" id="role" name="role" required>
+                        <option value="1">System admin</option>
+                        <option value="2">STS manager</option>
+                        <option value="3">Fill manager</option>
+                        <option value="4">Unassigned user</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create User</button>
+            </form>
+        </div>
+        <script>
+            // No need to handle form submission here since the form will be submitted automatically
+        </script>
+        <div style="margin-bottom: 20px;"></div>
+    </body>

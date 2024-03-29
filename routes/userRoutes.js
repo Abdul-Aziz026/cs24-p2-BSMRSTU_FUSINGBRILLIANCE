@@ -164,20 +164,27 @@ router.post('/login', async (req, res) => {
         
         res.locals.LoggedIn = true;
         res.locals.email = user.email;
+        req.session.user = user;
+        console.log("user = ", user);
+        console.log("end.......");
         // res.status(200).json({ token });
         if (user.role == 1) {
-            res.send("system Admin");
+            
+            res.redirect("/home");
+            // res.send("system Admin");
         }
         if (user.role == 2) {
+            res.redirect("/home");
             // res.send("STS Manager Page");
-            res.render('sts_manager.ejs',  {user});
+            // res.render('sts_manager.ejs',  {user});
         }
         if (user.role == 3) {
-            res.send("Landfill Manager Page");
+            res.redirect("/home");
         }
         else {
-            req.session.user = user;
-            res.render('unassigned.ejs',  {user});
+            res.redirect("/home");
+        //     req.session.user = user;
+        //     res.render('unassigned.ejs',  {user});
         }
     } catch (error) {
         res.status(500).send('Login failed');

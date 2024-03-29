@@ -45,40 +45,43 @@ app.use((req, res, next) => {
 
 app.get('/profile',(req,res)=>{
     const user = req.session.user;
-    res.render('profile.ejs' , {user})
-})
-let gtotwast , gtotalFuel , gtotcost;
+    // return res.send(user);
+    res.render('profile.ejs' , {user});
+});
+
 app.get("/home", async(req, res)=>{
     // res.render("dashBoard.ejs");
     const totWaste = await WasteCollection.find();
     let totalWaste = 0, totalFuel = 0, totalCost = 0;
     for (waste of totWaste) {
         totalWaste += waste.waste_volume;
-        const sts = await StsCollection.find({sts_id: waste.sts_id});
-        console.log(sts);
-        let curDist = sts.gps_location.x + sts.gps_location.y ;
-        totalFuel += curDist;
-        const vehicle = await vehicleCollection.findById(vehicle_id);
+        const sts = await StsCollection.findOne({sts_id: waste.sts_id});
+        if (sts && sts.length > 0) {
+            console.log(sts);
+            let curDist = sts.gps_location.x + sts.gps_location.y ;
+            totalFuel += curDist;
+        }
+        const vehicle = await vehicleCollection.findById(sts.vehile_id);
         console.log("vehicle : ", vehicle);
-        let curCost = 0;
-        if (vehicle.vehicle_type=="Truck") {
-            // 3 ton
-            curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 3;
-        }
-        else if (vehicle.vehicle_type=="Compactor") {
-            // 7 ton
-            curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 7;
-        }
-        else {
-            // 5 ton
-            curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 5;
+        let curCost = 1;
+        if (vehicle && vehicle.length > 0) {
+            curCost = 0;
+            if (vehicle.vehicle_type==="Truck") {
+                // 3 ton
+                curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 3;
+            }
+            else if (vehicle.vehicle_type=="Compactor") {
+                // 7 ton
+                curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 7;
+            }
+            else {
+                // 5 ton
+                curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 5;
+            }
         }
         totalCost += curCost * curDist;
     }
     
-    gtotwast = totWaste; 
-    gtotcost = totalCost;
-    gtotalFuel = totalFuel;
     res.render("dash.ejs", {totalWaste, totalFuel, totalCost});
 });
 
@@ -95,6 +98,9 @@ app.use('/auth' , UserRoute);
 // vehicle route....
 const vehicleRoute = require('./routes/vehiclesRoute.js');
 app.use('/vehicles', vehicleRoute);
+
+const userRoute = require("./routes/userRoute.js");
+app.use("/users", userRoute);
 
 // sts route....
 const stsRoutes = require('./routes/stsRouter.js');

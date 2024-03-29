@@ -1,0 +1,39 @@
+<% layout("/layouts/boilerplate.ejs") %>
+
+    <body style="text-align: center;">
+        <div class="container">
+            <h1>Select User Role</h1>
+            <select id="roleSelect">
+                <option value="1">STS Manager</option>
+                <option value="2">Landfill Manager</option>
+                <option value="3">Unassigned User</option>
+            </select>
+            <div id="userList"></div>
+        </div>
+
+        <script>
+            document.getElementById('roleSelect').addEventListener('change', async (event) => {
+                const selectedRole = event.target.value;
+                const userListContainer = document.getElementById('userList');
+                try {
+                    const response = await fetch(`/users/role/${selectedRole}`);
+                    const users = await response.json();
+                    userListContainer.innerHTML = '';
+                    users.forEach(user => {
+                        const userCard = document.createElement('div');
+                        userCard.classList.add('user-card');
+                        const userName = document.createElement('h3');
+                        userName.textContent = user.name;
+                        const userEmail = document.createElement('p');
+                        userEmail.textContent = user.email;
+                        userCard.appendChild(userName);
+                        userCard.appendChild(userEmail);
+                        userListContainer.appendChild(userCard);
+                    });
+                } catch (error) {
+                    console.error('Error fetching users:', error);
+                }
+            });
+        </script>
+        <div style="height: 60vh;"></div>
+    </body>
