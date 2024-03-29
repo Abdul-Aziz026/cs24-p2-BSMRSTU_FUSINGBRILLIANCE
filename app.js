@@ -22,6 +22,12 @@ app.set("views", path.join(__dirname, "/views"));
 // for serving public folder css file all place
 app.use(express.static(path.join(__dirname, "/public")));
 
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: false
+}));
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: true}));
 
@@ -33,11 +39,15 @@ const vehicleCollection = require("./models/vehiclesModel.js");
 // Define middleware to set LoggedIn variable
 app.use((req, res, next) => {
     res.locals.LoggedIn = true;
+    res.locals.roles = 1;
     next();
 });
 
-
-
+app.get('/profile',(req,res)=>{
+    const user = req.session.user;
+    res.render('profile.ejs' , {user})
+})
+let gtotwast , gtotalFuel , gtotcost;
 app.get("/home", async(req, res)=>{
     // res.render("dashBoard.ejs");
     const totWaste = await WasteCollection.find();
@@ -65,7 +75,10 @@ app.get("/home", async(req, res)=>{
         }
         totalCost += curCost * curDist;
     }
-    console.log(totWaste);
+    
+    gtotwast = totWaste; 
+    gtotcost = totalCost;
+    gtotalFuel = totalFuel;
     res.render("dash.ejs", {totalWaste, totalFuel, totalCost});
 });
 

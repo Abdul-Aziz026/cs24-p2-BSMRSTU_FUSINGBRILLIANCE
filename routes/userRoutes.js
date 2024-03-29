@@ -169,13 +169,15 @@ router.post('/login', async (req, res) => {
             res.send("system Admin");
         }
         if (user.role == 2) {
-            res.send("STS Manager Page");
+            // res.send("STS Manager Page");
+            res.render('sts_manager.ejs',  {user});
         }
         if (user.role == 3) {
             res.send("Landfill Manager Page");
         }
         else {
-            res.send("Unassigned User");
+            req.session.user = user;
+            res.render('unassigned.ejs',  {user});
         }
     } catch (error) {
         res.status(500).send('Login failed');

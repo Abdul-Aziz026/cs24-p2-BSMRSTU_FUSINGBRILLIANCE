@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information Form</title>
+</head>
+<body>
+    <h1>Waste Collection Information</h1>
+    <form id="userInfoForm">
+        <label for="sts_id">STS station</label>
+        <input type="text" id="sts_id" name="sts_id" required><br><br>
+        
+        <label for="vehicle_id">Vechicle ID</label>
+        <input type="text" id="vehicle_id" name="vehicle_id" required><br><br>
+        
+        <label for="waste_volume">Waste(ton)</label>
+        <input type="number" id="waste_volume" name="waste_volume" required><br><br>
+        
+        <input type="submit" value="Submit">
+    </form>
+    <h1>List of Waste Collection</h1>
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>STS ID</th>
+                <th>Waste Volume</th>
+                <th>Departure Time</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        window.onload = function(){
+            // waste
+            fetch('/waste_collection')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#dataTable tbody');
+                data.forEach(row => {
+                    arrivalTime.push(Date(row.departure_time).toLocaleString());
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.sts_id}</td>
+                        <td>${row.waste_volume}</td>
+                        <td>${new Date(row.departure_time).toLocaleString()}</td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+    </script>
+</body>
+</html>
