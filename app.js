@@ -32,21 +32,8 @@ const vehicleCollection = require("./models/vehiclesModel.js");
 
 // Define middleware to set LoggedIn variable
 app.use((req, res, next) => {
-    const token = req.headers.authorization;
-    if (token) {
-        jwt.verify(token, 'your_secret_key', (err, decodedToken) => {
-            if (err) {
-                res.locals.LoggedIn = true;
-            } else {
-                res.locals.LoggedIn = true;
-            }
-            next();
-        });
-    } else {
-        // No token provided, user is not logged in
-        res.locals.LoggedIn = false;
-        next();
-    }
+    res.locals.LoggedIn = true;
+    next();
 });
 
 
