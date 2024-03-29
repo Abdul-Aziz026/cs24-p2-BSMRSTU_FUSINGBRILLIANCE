@@ -56,13 +56,14 @@ app.get("/home", async(req, res)=>{
     for (waste of totWaste) {
         totalWaste += waste.waste_volume;
         const sts = await StsCollection.findOne({sts_id: waste.sts_id});
+        let curDist = 0;
         if (sts && sts.length > 0) {
             console.log(sts);
-            let curDist = sts.gps_location.x + sts.gps_location.y ;
+            curDist = sts.gps_location.x + sts.gps_location.y ;
             totalFuel += curDist;
         }
         const vehicle = await vehicleCollection.findById(sts.vehile_id);
-        console.log("vehicle : ", vehicle);
+        // console.log("vehicle : ", vehicle);
         let curCost = 1;
         if (vehicle && vehicle.length > 0) {
             curCost = 0;
