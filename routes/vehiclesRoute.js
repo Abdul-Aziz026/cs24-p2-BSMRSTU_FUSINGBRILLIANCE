@@ -28,10 +28,11 @@ router.get('/:id', async (req, res) => {
 // POST a new vehicle
 router.post('/', async (req, res) => {
     const vehicle = new Vehicle({
-        vehicle_id: req.body.vehicle_id,
         vehicle_type: req.body.vehicle_type,
         capacity: req.body.capacity,
-        availability: req.body.availability
+        availability: req.body.availability,
+        loaded: req.body.loaded,
+        unloaded: req.body.unloaded
     });
 
     try {

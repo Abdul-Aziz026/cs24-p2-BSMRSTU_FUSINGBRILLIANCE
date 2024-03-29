@@ -1,0 +1,29 @@
+<% layout("/layouts/boilerplate.ejs") %>
+
+    <body>
+        <div class="container">
+            <h2 style="color: #333;">User Registration</h2>
+            <form action="/auth/registration" method="post">
+                <div class="form-group">
+                    <label for="name" style="font-weight: bold;">Username</label>
+                    <input type="text" id="name" name="name" placeholder="Username" required
+                        style="width: 100%; padding: 10px;">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" style="font-weight: bold;">Email</label>
+                    <input type="email" id="email" name="email" placeholder="E-mail" required
+                        style="width: 100%; padding: 10px;">
+                </div>
+
+                <div class="form-group">
+                    <label for="password" style="font-weight: bold;">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" required
+                        style="width: 100%; padding: 10px;">
+                </div>
+                <button type="submit"
+                    style="background-color: #007bff; color: #fff; padding: 10px 20px; border: none; cursor: pointer;">Register</button>
+            </form>
+            <div style="margin-bottom: 50px;"></div>
+        </div>
+    </body>

@@ -1,0 +1,142 @@
+<% layout("/layouts/boilerplate.ejs") %>
+
+    <body>
+        <div class="container mt-5">
+            <h2>Total Waste Collection: <%= totalWaste %>Ton</h2>
+            <h2>Total Fuel Used: <%= totalFuel %>Liter</h2>
+            <h2>Total Cost: <%= totalCost %>$</h2>
+
+            <h1 class="mb-4">Transportation Dashboard</h1>
+            <table id="TransportationTable" class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>STS ID</th>
+                        <th>Vehicle Type</th>
+                        <th>Waste Volume</th>
+                        <th>Departure Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <h1 class="mb-4">Waste Collection Dashboard</h1>
+            <table id="dataTable" class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>STS ID</th>
+                        <th>Waste Volume</th>
+                        <th>Departure Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <h1 class="mb-4">Landfill</h1>
+            <table id="landfill" class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Vehicle ID</th>
+                        <th>Total Waste</th>
+                        <th>Arrival Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <h1 class="mb-4">Total Fuel</h1>
+            <table id="totalfuel" class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Vehicle ID</th>
+                        <th>Total Load</th>
+                        <th>Departure From STS</th>
+                        <th>Arrival at Landfill</th>
+                        <th>Total Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            let arrivalTime = [];
+            let departureTime = [];
+            let cnt = 0;
+            window.onload = function () {
+                //transport
+                fetch('/waste_collection')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.querySelector('#TransportationTable tbody');
+                        data.forEach(row => {
+                            arrivalTime.push(Date(row.departure_time).toLocaleString());
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                <td>${row.sts_id}</td>
+                <td>${row.vehile_id}</td>
+                <td>${row.waste_volume}</td>
+                <td>${new Date(row.departure_time).toLocaleString()}</td>
+            `;
+                            tableBody.appendChild(tr);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+                // waste
+                fetch('/waste_collection')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.querySelector('#dataTable tbody');
+                        data.forEach(row => {
+                            arrivalTime.push(Date(row.departure_time).toLocaleString());
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                <td>${row.sts_id}</td>
+                <td>${row.waste_volume}</td>
+                <td>${new Date(row.departure_time).toLocaleString()}</td>
+            `;
+                            tableBody.appendChild(tr);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+                fetch('/landfill_transfer')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.querySelector('#landfill tbody');
+                        data.forEach(row => {
+                            departureTime.push(Date(row.arrival_time).toLocaleString());
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                <td>${row.vehicle_id}</td>
+                <td>${row.waste_volume}</td>
+                <td>${new Date(row.arrival_time).toLocaleString()}</td>
+            `;
+                            tableBody.appendChild(tr);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+
+                // fuel calc...
+                fetch('/landfill_transfer')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.querySelector('#totalfuel tbody');
+                        data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                <td>${row.vehicle_id}</td>
+                <td>${row.waste_volume}</td>
+                <td>${new Date(arrivalTime[cnt]).toLocaleString()}</td>
+                <td>${new Date(departureTime[cnt]).toLocaleString()}</td>
+            `;
+                            tableBody.appendChild(tr);
+                            cnt++;
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            };
+        </script>
+    </body>

@@ -1,25 +1,197 @@
 const express = require('express');
+const app = express();
 const router = express.Router();
 const User = require('../models/userModel');
 const path = require('path');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+// Parse JSON bodies for this application
 
-router.post('/', async (req, res) => {
+const nodemailer = require('nodemailer');
+
+
+// emailInput Take route for change password...
+router.get('/changePassword', (req, res)=>{
+    res.render("emailInput.ejs");
+});
+
+// send email Route...
+router.post('/sendMail', async(req, res)=>{
+    // set this sendMail otp as null...
+    // const updatedUser = await User.findOneAndUpdate(
+    //     { email: req.body.email }, // Filter: find user by email
+    //     { otp: "....." }, // Update: set the new OTP
+    //     { new: true } // Options: return the updated document
+    // );
+
+    // res.send(req.body.email);
+    // first send mail 
+    let transport = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        // host: "smtp.ethereal.email",
+        // service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD
+        }
+    });
+
+    function generateRandomString() {
+        const s = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let randomString = '';
+        for (let i = 0; i < 6; i++) {
+            randomString += s.charAt(Math.floor(Math.random() * s.length));
+        }
+        return randomString;
+    }
+    const otp = generateRandomString();
+    console.log("Generated Random String:", otp);
+    // req.locals.OTP = otp;
+    // console.log(req.)
+
+    const updatedUser = await User.findOneAndUpdate(
+        { email: req.body.email }, // Filter: find user by email
+        { otp: otp }, // Update: set the new OTP
+        { new: true } // Options: return the updated document
+    );
+    
+    const toEmail = req.body.email;
+    // const toEmail = "azizurcsebsmrstu@gmail.com" ;
+    console.log(req.body.email, process.env.EMAIL_USERNAME);
+    const mailOptions = {
+        from: process.env.EMAIL_USERNAME, // Sender address
+        to: toEmail, // List of recipients
+        subject: 'Password Reset OTP', // Subject line
+        text: `Your OTP code is ${otp}` // Plain text body
+    };
+    
+    transport.sendMail(mailOptions, function(err, info) {
+        if (err) {
+            console.log("error is => " + err.message);
+        } else {
+            console.log("send mail successfully!");
+        }
+    });
+
+
+    // then otp input form render...
+    res.render("OTPtakenForm.ejs");
+});
+
+router.post("/verifyOTP", async(req, res)=>{
+    console.log(req.body.otp, req.body.email);
+    // res.send(req.body.otp);
+    let user = await User.findOne({email: req.body.email});
+    console.log(user);
+    // const otp = req.body.otp;
+    if (req.body.otp == user.otp) {
+        res.render("changePassword.ejs");
+    }
+    else {
+        res.redirect('/auth/changePassword');
+    }
+});
+
+router.post("/changepass", async(req, res)=> {
+    const password = req.body.password;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const updatedUser = await User.findOneAndUpdate(
+        { email: req.body.email }, // Filter: find user by email
+        { password: hashedPassword }, // Update: set the new OTP
+        { new: true } // Options: return the updated document
+    );
+    return res.send(updatedUser);
+    // res.send("updated password");
+})
+
+
+router.get('/registration', async(req, res)=>{
+    res.render("registrationForm.ejs");
+});
+
+router.post('/registration', async (req, res) => {
+    // console.log(req.body);
+    // return res.send(req.body);
     try {
+<<<<<<< HEAD
         const { name, password, email, role } = req.body;
         console.log(name,password,email,role);
+=======
+        const { name, password, email, role=4 } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+>>>>>>> cd9e12f09e52dfedd1bc4206c1a395d9438f11f7
         const newUser = new User({
             name: name,
-            password: password,
+            password: hashedPassword,
             email: email,
             role: role
         });
         const result = await newUser.save();
+<<<<<<< HEAD
         res.render('userList.ejs');
     } catch (err) {
+=======
+        // res.status(201).json(result);
+        
+        res.status(201).send('User registered successfully');
+    }
+    catch (err) {
+>>>>>>> cd9e12f09e52dfedd1bc4206c1a395d9438f11f7
         console.error('Error creating user:', err);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send('Registration failed');
     }
 });
+
+router.get('/login', async(req, res)=>{
+    // return res.send("ok");
+    res.render("loginForm.ejs");
+});
+
+
+router.post('/login', async (req, res) => {
+    // return res.send("working...");
+    // console.log(req.body);
+    // return res.send(req.body);
+    try {
+        const { name, password } = req.body;
+        console.log(req.body.name);
+        const user = await User.findOne({ name: name });
+        // const user = await User.find();
+        // console.log(user);
+        // return res.send('got');
+        if (!user) {
+            return res.status(401).json({ error: 'Authentication failed' });
+        }
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Authentication failed' });
+        }
+        const token = jwt.sign({ userId: user._id }, 'your-secret-key', {
+            expiresIn: '1h',
+        });
+        
+        res.locals.LoggedIn = true;
+        res.locals.email = user.email;
+        // res.status(200).json({ token });
+        if (user.role == 1) {
+            res.send("system Admin");
+        }
+        if (user.role == 2) {
+            res.send("STS Manager Page");
+        }
+        if (user.role == 3) {
+            res.send("Landfill Manager Page");
+        }
+        else {
+            res.send("Unassigned User");
+        }
+    } catch (error) {
+        res.status(500).send('Login failed');
+    }
+});
+
 
 router.get('/', async (req, res) => {
     try {
@@ -30,7 +202,6 @@ router.get('/', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-
 router.get('/:role_id', async (req, res) => {
 
     try {
