@@ -1,0 +1,93 @@
+<!-- users.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User and STS List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            width: 25%; /* Set each column to occupy 25% of the table width */
+        }
+        th {
+            background-color: aqua;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">User List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <!-- User data will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <h1  style="text-align: center;">STS List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Ward No</th>
+                <th>Capacity</th>
+                <th>GPS Location</th>
+                <th>STS Manager ID</th>
+            </tr>
+        </thead>
+        <tbody id="stsTableBody">
+            <!-- STS data will be dynamically inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Fetch user data from the server
+        fetch('/user')
+            .then(response => response.json())
+            .then(users => {
+                const userTableBody = document.getElementById('userTableBody');
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                    `;
+                    userTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching users:', error));
+
+        // Fetch STS data from the server
+        fetch('/sts')
+            .then(response => response.json())
+            .then(sts => {
+                const stsTableBody = document.getElementById('stsTableBody');
+                sts.forEach(sts => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${sts.ward_no}</td>
+                        <td>${sts.capacity}</td>
+                        <td>${sts.gps_location}</td>
+                        <td>${sts.sts_mgr_id}</td>
+                    `;
+                    stsTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching STS:', error));
+    </script>
+</body>
+</html>

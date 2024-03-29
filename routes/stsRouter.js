@@ -24,6 +24,7 @@ router.get('/', async (req, res) => {
         console.error('Error retrieving STS data:', error);
         res.status(500).json({ error: 'Could not retrieve STS data' });
     }
+    
 });
 
 module.exports = router;

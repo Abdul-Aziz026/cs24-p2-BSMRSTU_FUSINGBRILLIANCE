@@ -12,13 +12,11 @@ app.set("views", path.join(__dirname, "/views"));
 
 app.use(bodyParser.json());
 
-app.get("/home", (req, res)=>{
-    res.send("home page");
-})
+app.use(express.urlencoded({extended: true}));
 
 // //user route...
 const UserRoute = require('./routes/userRoutes.js');
-app.use('/user' , UserRoute);
+app.use('/users' , UserRoute);
 
 // vehicle route....
 const vehicleRoute = require('./routes/vehiclesRoute.js');
@@ -26,7 +24,15 @@ app.use('/vehicles', vehicleRoute);
 
 // sts route....
 const stsRoutes = require('./routes/stsRouter.js');
+
+
+
 app.use('/sts', stsRoutes);
+
+
+app.get('/',(req,res)=>{
+    res.render('userList.ejs'); 
+})
 
 // waste collection route....
 const wasteCollectionRoute = require('./routes/waste_collectionRoute.js');
