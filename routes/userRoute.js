@@ -6,7 +6,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 // Parse JSON bodies for this application
 const nodemailer = require('nodemailer');
- 
+
+
 // router.post('/', async (req, res) => {
 //     try {
 //         const { name, password, email, role } = req.body;
