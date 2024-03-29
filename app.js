@@ -1,8 +1,20 @@
 const mongoose = require("mongoose");
 const express = require('express')
 const app = express();
+
+
+
+const session = require("express-session");
+const flash = require("connect-flash");
+app.use(flash());
+
+
 const bodyParser = require('body-parser');
 require("./databaseConCheck.js");
+// boilerplate includer
+const ejsMate = require('ejs-mate');
+// use ejs-locals for all ejs templates:
+app.engine('ejs', ejsMate);
 
 const path = require('path');
 app.set("view engine", "ejs");
@@ -17,6 +29,27 @@ app.use(express.urlencoded({extended: true}));
 const WasteCollection = require("./models/waste_collectionModel.js");
 const StsCollection = require("./models/stsModel.js");
 const vehicleCollection = require("./models/vehiclesModel.js");
+
+// Define middleware to set LoggedIn variable
+app.use((req, res, next) => {
+    const token = req.headers.authorization;
+    if (token) {
+        jwt.verify(token, 'your_secret_key', (err, decodedToken) => {
+            if (err) {
+                res.locals.LoggedIn = true;
+            } else {
+                res.locals.LoggedIn = true;
+            }
+            next();
+        });
+    } else {
+        // No token provided, user is not logged in
+        res.locals.LoggedIn = false;
+        next();
+    }
+});
+
+
 
 app.get("/home", async(req, res)=>{
     // res.render("dashBoard.ejs");

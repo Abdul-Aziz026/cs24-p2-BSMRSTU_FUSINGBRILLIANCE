@@ -161,6 +161,9 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ userId: user._id }, 'your-secret-key', {
             expiresIn: '1h',
         });
+        
+        res.locals.LoggedIn = true;
+        res.locals.email = user.email;
         // res.status(200).json({ token });
         if (user.role == 1) {
             res.send("system Admin");
