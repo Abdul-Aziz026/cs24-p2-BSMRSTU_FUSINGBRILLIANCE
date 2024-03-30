@@ -143,7 +143,7 @@ router.post('/registration', async (req, res) => {
         const result = await newUser.save();
         // res.status(201).json(result);
         
-        res.status(201).send('User registered successfully');
+        res.status(201).send(result);
     }
     catch (err) {
         console.error('Error creating user:', err);
@@ -184,22 +184,31 @@ router.post('/login', async (req, res) => {
         req.session.user = user;
         console.log("user = ", user);
         console.log("end.......");
+        // console.log("what happen");
+        // return res.redirect("/home");
         // res.status(200).json({ token });
         if (user.role == 1) {
-            
-            res.redirect("/home");
+            // console.log(1, user.role);
+            res.render("systemAdmin.ejs");
+            // res.redirect("/home");
             // res.send("system Admin");
         }
-        if (user.role == 2) {
-            res.redirect("/home");
+        else if (user.role == 2) {
+            // res.render("systemAdmin.ejs");
+            // console.log(2, user.role);
+            // res.redirect("/home");
+            res.render("sts_manager.ejs");
+            // res.redirect("/home");
             // res.send("STS Manager Page");
             // res.render('sts_manager.ejs',  {user});
         }
-        if (user.role == 3) {
-            res.redirect("/home");
+        else if (user.role == 3) {
+            res.render("landFillManager.ejs");
+            // res.redirect("/home");
         }
         else {
-            res.redirect("/home");
+            res.redirect("/profile");
+            // res.redirect("/home");
         //     req.session.user = user;
         //     res.render('unassigned.ejs',  {user});
         }

@@ -24,18 +24,12 @@
                         <a class="nav-link" href="/home">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My Home</a>
+                        <a class="nav-link" href="/myhome">My Home</a>
                     </li>
                     <%if (LoggedIn) {%>
                         <li class="nav-item">
                             <a class="nav-link" href="/profile">Profile</a>
                         </li>
-                        <li>
-                            <%if (roles==1) {%>
-                                <a class="nav-link" href="/auth/registration">Create NewUser</a>
-                                <%}%>
-                        </li>
-
                         <li class="nav-item">
                             <a class="nav-link" href="/auth/logout">Logout</a>
                         </li>

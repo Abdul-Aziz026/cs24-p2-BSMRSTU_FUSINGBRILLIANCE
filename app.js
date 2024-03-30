@@ -97,6 +97,28 @@ app.get("/home", async(req, res)=>{
     res.render("dash.ejs", {totalWaste, totalFuel, totalCost});
 });
 
+app.get("/myhome", (req, res)=>{
+    const user = req.session.user;
+    if (!user) return res.redirect("/auth/login");
+    
+    if (user.role == 1) {
+        res.render("systemAdmin.ejs");
+        // res.redirect("/home");
+    }
+    else if (user.role == 2) {
+        res.render("sts_manager.ejs");
+        // res.redirect("/home");
+    }
+    else if (user.role == 3) {
+        res.render("landFillManager.ejs");
+        // res.redirect("/home");
+    }
+    else {
+        res.redirect("/profile");
+        // res.redirect("/home");
+    }
+});
+
 // const mailsend= require('./routes/emailJsRoute.js');
 // app.use("/user", mailsend);
 

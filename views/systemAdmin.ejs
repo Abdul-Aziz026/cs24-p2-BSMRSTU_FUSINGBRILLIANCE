@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+<% layout("/layouts/boilerplate.ejs") %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+    <body>
+        <h3 style="text-align: center; margin-top: 20px;">System Admin Page</h3>
+        <div class="container" style="display: flex; margin-top: 20px; height: 70vh;">
+            <form action="/auth/Registration" method="get" style="margin-left: 10%;">
+                <button type="submit" class="btn btn-primary">Create New User</button>
+            </form>
+            <form action="/users" method="GET" style="margin-left: 20%;">
+                <button type="submit" class="btn btn-secondary">Show All Users</button>
+            </form>
+            <form action="/users/roles" method="GET" style="margin-left: 20%;">
+                <button type="submit" class="btn btn-info">Show All Available Roles</button>
+            </form>
+        </div>
 
-<body>
-    <h4>System Admin Page</h4>
-</body>
-
-</html>
+    </body>
