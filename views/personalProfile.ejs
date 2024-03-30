@@ -25,6 +25,10 @@
                         <%= user.role %>
                     </p>
                 </div>
+                <form action="/users/<%=user._id %>/p" method="get">
+                    <button type="submit" class="btn btn-primary">Edit Profile</button>
+                </form>
+                <br>
                 <form action="/auth/change-password" method="get">
                     <button type="submit" class="btn btn-primary">Change Password</button>
                 </form>

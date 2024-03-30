@@ -7,6 +7,11 @@ const jwt = require('jsonwebtoken');
 // Parse JSON bodies for this application
 const nodemailer = require('nodemailer');
 
+// router.use((req, res, next)=>{
+//     return res.send(req.body);
+//     // next();
+// });
+
 
 // router.post('/', async (req, res) => {
 //     try {
@@ -75,10 +80,50 @@ router.get('/role/:role_id', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 router.get('/roles',(req,res)=>{
     console.log('yes');
      res.render('user_role.ejs',{});
 });
+
+router.get("/:role_id/p", async(req, res)=>{
+    const role_id = req.params.role_id;
+    const user = await User.findById(role_id);
+    res.render("userProfileUpd.ejs", {user});
+});
+
+router.put('/:id/roles', async (req, res) => {
+    console.log("coming,,,,");
+    try {
+        const id = req.params.id;
+        const { role, sts_id } = req.body;
+        console.log(role,sts_id)
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { role: role, sts_id: sts_id }, // Pass both fields in a single object
+            { new: true } // Options object for returning the updated document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(updatedUser);
+    } catch (err) {
+        console.error('Error updating user:', err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// router.put('/:userId/p', (req, res) => {
+//     const userId = req.params.userId; // Get the userId from URL parameter
+//     const { name, email } = req.query; // Get name and email from query parameters
+  
+//     // Perform any necessary validation or processing here
+//     // For now, let's just send back a response with the received data
+//     res.json({ userId, name, email });
+// });
 
 
 router.get('/:role_id', async (req, res) => {
@@ -137,6 +182,8 @@ router.get('/roles', async (req, res) => {
  
  
 router.put('/:id', async (req, res) => {
+    // console.log(req.body);
+    return res.send("helllo");
     try {
       const id = req.params.id;
       const { role } = req.body;

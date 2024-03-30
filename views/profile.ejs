@@ -1,193 +1,117 @@
-<!DOCTYPE html>
-<html lang="en">
+<% layout("/layouts/boilerplate.ejs") %>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Profile</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
+    <body>
+        <div class="container">
+            <button onclick="window.location.href='/users'">Home</button>
+            <h1>User Profile</h1>
+            <hr />
+            <p><strong>Name:</strong>
+                <%= user.name %>
+            </p>
+            <p><strong>Email:</strong>
+                <%= user.email %>
+            </p>
+            <p id="role1"></p>
+            <form id="updateRoleForm" method="PUT" action="/users/<%= user._id %>/roles">
+                <label for="newRole">Select New Role:</label>
+                <select id="newRole" name="role">
+                    <option value="1">System admin</option>
+                    <option value="2">sts manager</option>
+                    <option value="3">landfill manager</option>
+                    <option value="4">unassigned user</option>
+                </select>
+                <label for="sts_id">Enter Sts Id:</label>
+                <input type="text" id="sts_id" name="sts_id" placeholder="Enter sts id" required>
 
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+                <button type="submit">Update Role</button>
+            </form>
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
+            <hr />
 
-        form {
-            margin-top: 20px;
-        }
+            <button id="deleteUserButton" class="delete-button">Delete User</button>
+        </div>
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin-top: 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .delete-button {
-            background-color: #dc3545;
-        }
-
-        p {
-            margin-bottom: 10px;
-            color: #333;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <button onclick="window.location.href='/users'">Home</button>
-        <h1>User Profile</h1>
-        <hr />
-        <p><strong>Name:</strong>
-            <%= user.name %>
-        </p>
-        <p><strong>Email:</strong>
-            <%= user.email %>
-        </p>
-        <p id="role1"></p>
-
-        <form id="updateRoleForm" method="POST" action="/users/<%= user._id %>">
-            <label for="newRole">Select New Role:</label>
-            <select id="newRole" name="role">
-                <option value="1">System admin</option>
-                <option value="2">sts manager</option>
-                <option value="3">landfill manager</option>
-                <option value="4">unassigned user</option>
-            </select>
-            <button type="submit">Update Role</button>
-        </form>
-
-        <hr />
-
-        <button id="deleteUserButton" class="delete-button">Delete User</button>
-    </div>
-
-    <script>
-
-        function updateRoleText(roleValue) {
-            switch (roleValue) {
-                case "1":
-                    return 'System Admin';
-                case "2":
-                    return 'STS Manager';
-                case "3":
-                    return 'Landfill Manager';
-                default:
-                    return 'Unassigned User';
-            }
-        }
-
-        const newrole = '<%= user.role %>';
-
-        document.getElementById('role1').innerHTML = '<strong>Current Role:</strong> ' + updateRoleText(newrole);
-        const updateRoleForm = document.getElementById("updateRoleForm");
-        const deleteUserButton = document.getElementById("deleteUserButton");
-
-        updateRoleForm.addEventListener("submit", async (event) => {
-            event.preventDefault(); // Prevent default form submission
-
-            const newRole = document.getElementById("newRole").value;
-
-            try {
-                const response = await fetch(`/users/<%= user._id %>`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ role: newRole }),
-                });
-
-                const updatedUser = await response.json();
-
-                if (updatedUser) {
-                    // Update the displayed role on the page
-                    let roleText = "";
-                    switch (updatedUser.role) {
-                        case 1:
-                            roleText = "System Admin";
-                            break;
-                        case 2:
-                            roleText = "STS Manager";
-                            break;
-                        case 3:
-                            roleText = "Landfill Manager";
-                            break;
-                        default:
-                            roleText = "Unassigned User";
-                    }
-                    document.getElementById(
-                        "role1"
-                    ).innerHTML = `<strong>Current Role:</strong> ${roleText}`;
-                    alert("Role updated successfully!");
-                } else {
-                    alert("An error occurred while updating the role.");
+        <script>
+            function updateRoleText(roleValue) {
+                switch (roleValue) {
+                    case "1":
+                        return 'System Admin';
+                    case "2":
+                        return 'STS Manager';
+                    case "3":
+                        return 'Landfill Manager';
+                    default:
+                        return 'Unassigned User';
                 }
-            } catch (error) {
-                console.error("Error updating user role:", error);
-                alert("An error occurred while updating the role.");
             }
-        });
 
-        deleteUserButton.addEventListener("click", async () => {
-            const confirmDelete = confirm(
-                "Are you sure you want to delete this user?"
-            );
+            document.getElementById('role1').innerHTML = '<strong>Current Role:</strong> ' + updateRoleText('<%= user.role %>');
 
-            if (confirmDelete) {
+            const updateRoleForm = document.getElementById("updateRoleForm");
+            const deleteUserButton = document.getElementById("deleteUserButton");
+
+            updateRoleForm.addEventListener("submit", async (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                const newRole = document.getElementById("newRole").value;
+                const stsId = document.getElementById("sts_id").value;
+
                 try {
-                    const response = await fetch(`/users/<%= user._id %>`, {
-                        method: "DELETE",
+                    const response = await fetch(`/users/<%= user._id %>/roles`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ role: newRole, sts_id: stsId }),
                     });
 
                     if (response.ok) {
-                        alert("User deleted successfully!");
-                        window.location.href = "/users"; // Redirect to the home page or another appropriate page
+                        const updatedUser = await response.json();
+                        let roleText = "";
+                        switch (updatedUser.role) {
+                            case 1:
+                                roleText = "System Admin";
+                                break;
+                            case 2:
+                                roleText = "STS Manager";
+                                break;
+                            case 3:
+                                roleText = "Landfill Manager";
+                                break;
+                            default:
+                                roleText = "Unassigned User";
+                        }
+                        document.getElementById("role1").innerHTML = `<strong>Current Role:</strong> ${roleText}`;
+                        alert("Role updated successfully!");
                     } else {
-                        alert("An error occurred while deleting the user.");
+                        alert("An error occurred while updating the role.");
                     }
                 } catch (error) {
-                    console.error("Error deleting user:", error);
-                    alert("An error occurred while deleting the user.");
+                    console.error("Error updating user role:", error);
+                    alert("An error occurred while updating the role.");
                 }
-            }
-        });
-    </script>
-</body>
+            });
 
-</html>
+            deleteUserButton.addEventListener("click", async () => {
+                const confirmDelete = confirm("Are you sure you want to delete this user?");
+
+                if (confirmDelete) {
+                    try {
+                        const response = await fetch(`/users/<%= user._id %>`, {
+                            method: "DELETE",
+                        });
+
+                        if (response.ok) {
+                            alert("User deleted successfully!");
+                            window.location.href = "/users"; // Redirect to the home page or another appropriate page
+                        } else {
+                            alert("An error occurred while deleting the user.");
+                        }
+                    } catch (error) {
+                        console.error("Error deleting user:", error);
+                        alert("An error occurred while deleting the user.");
+                    }
+                }
+            });
+        </script>
+    </body>

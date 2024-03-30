@@ -6,7 +6,11 @@ const userSchema = new mongoose.Schema({
     password:{type:String, required: true},
     email:{type:String, required: true, unique: true},
     role: {type:Number, required: true, default: 4},
-    otp: {type:String, default: null}
+    otp: {type:String, default: null},
+    sts_id: {
+        type: String,
+        default: null
+    }
 });
  
 const User = mongoose.model('User' , userSchema);

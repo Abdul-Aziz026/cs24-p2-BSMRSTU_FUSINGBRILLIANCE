@@ -5,19 +5,23 @@ const LandfillTransfer = require('../models/LandfillTransferModel.js');
 // Route to create a new landfill transfer entry
 router.post('/', async (req, res) => {
     try {
-        const { vehicle_id, landfill_manager, waste_volume, arrival_time, departure_time } = req.body;
+        const { vehicle_id, waste_volume, arrival_time, departure_time } = req.body;
         const newTransfer = new LandfillTransfer({
             vehicle_id,
-            landfill_manager,
             waste_volume,
             arrival_time,
             departure_time
         });
+        console.log('home',newTransfer)
         const savedTransfer = await newTransfer.save();
-        res.json(savedTransfer);
+        res.redirect("/myhome");
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
+});
+
+router.get('/create',(req,res)=>{
+    res.render('createLandfill.ejs');
 });
 
 // Route to get all landfill transfer entries

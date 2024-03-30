@@ -3,28 +3,26 @@ const Schema = mongoose.Schema;
 
 const LandfillTransferSchema = new Schema({
     vehicle_id: {
-        type: Schema.Types.ObjectId,
+        type: String,
         ref: 'Vehicle',
         required: true
     },
-    landfill_manager: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
+    // landfill_manager: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'User',
+    //     required: false
+    // },
     waste_volume: {
         type: Number,
         required: true
     },
     arrival_time: {
         type: Date,
-        required: true,
-        default: Date.now
+        required: true
     },
     departure_time: {
         type: Date,
-        required: true,
-        default: Date.now
+        required: true
     }
 });
 

@@ -3,14 +3,14 @@
     <body>
         <div class="container">
             <h1>Waste Collection Information</h1>
-            <form id="userInfoForm">
-                <div class="form-group">
+            <form action="/waste_collection/sts_maneger" method="POST" id="userInfoForm">
+                <!-- <div class="form-group">
                     <label for="sts_id">STS station</label>
                     <input type="text" class="form-control" id="sts_id" name="sts_id" required>
-                </div>
+                </div> -->
                 <div class="form-group">
-                    <label for="vehicle_id">Vehicle ID</label>
-                    <input type="text" class="form-control" id="vehicle_id" name="vehicle_id" required>
+                    <label for="vehile_id">Vehicle ID</label>
+                    <input type="text" class="form-control" id="vehile_id" name="vehile_id" required>
                 </div>
                 <div class="form-group">
                     <label for="waste_volume">Waste (ton)</label>
@@ -23,6 +23,8 @@
                 <thead>
                     <tr>
                         <th>STS ID</th>
+                        <th>Vehicle Id</th>
+                        <th>Vehicle Type</th>
                         <th>Waste Volume</th>
                         <th>Departure Time</th>
                     </tr>
@@ -34,18 +36,19 @@
 
         <script>
             window.onload = function () {
-                fetch('/waste_collection')
+                //transport
+                fetch('/waste_collection/sts_maneger')
                     .then(response => response.json())
                     .then(data => {
                         const tableBody = document.querySelector('#dataTable tbody');
                         data.forEach(row => {
-                            arrivalTime.push(Date(row.departure_time).toLocaleString());
                             const tr = document.createElement('tr');
                             tr.innerHTML = `
                             <td>${row.sts_id}</td>
+                            <td>${row.vehile_id}</td>
+                            <td>${row.vehile_type}</td>
                             <td>${row.waste_volume}</td>
-                            <td>${new Date(row.departure_time).toLocaleString()}</td>
-                        `;
+                            <td>${new Date(row.departure_time).toLocaleString()}</td>`;
                             tableBody.appendChild(tr);
                         });
                     })

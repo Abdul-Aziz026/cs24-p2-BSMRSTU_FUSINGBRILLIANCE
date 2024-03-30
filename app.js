@@ -7,6 +7,7 @@ const app = express();
 const session = require("express-session");
 const flash = require("connect-flash");
 app.use(flash());
+app.use(express.json());
 
 
 const bodyParser = require('body-parser');
@@ -16,11 +17,37 @@ const ejsMate = require('ejs-mate');
 // use ejs-locals for all ejs templates:
 app.engine('ejs', ejsMate);
 
+const methodOverride = require("method-override");
+app.use(methodOverride("_method"));
+
 const path = require('path');
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 // for serving public folder css file all place
 app.use(express.static(path.join(__dirname, "/public")));
+
+
+// app.use('/users/:userId/p', (req, res) => {
+//     // return res.send("okkk");
+
+//     const userId = req.params.userId; // Get the userId from URL parameter
+//     const { name, email } = req.query; // Get name and email from query parameters
+//     console.log(name, email);
+//     // Perform any necessary validation or processing here
+//     // For now, let's just send back a response with the received data
+//     res.json({ userId, name, email });
+// });
+
+
+// PUT route handler
+app.put('/users/:userId/p', (req, res) => {
+    const userId = req.params.userId; // Get the userId from URL parameter
+    const { name, email } = req.body; // Get name and email from request body
+  
+    // Perform any necessary validation or processing here
+    // For now, let's just send back a response with the received data
+    return res.json({ userId, name, email });
+});
 
 app.use(session({
     secret: 'your_secret_key',

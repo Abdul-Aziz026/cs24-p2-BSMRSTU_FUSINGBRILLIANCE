@@ -1,0 +1,35 @@
+<% layout("/layouts/boilerplate.ejs") %>
+
+    <body>
+        <div class="container">
+            <h1>User Profile</h1>
+            <hr />
+            <form action="/users/<%= user._id %>/p?_method=PUT">
+                <div>
+                    <label for="name"><b>&nbsp;Title:</b></label>
+                    <input type="text" placeholder="name" class="form-control" id="name" name="name" value=<%=user.name
+                        %> required>
+                </div>
+                <div>
+                    <label for="email"><b>&nbsp;Title:</b></label>
+                    <input type="text" placeholder="email" class="form-control" id="email" name="email"
+                        value=<%=user.email %> required>
+                </div>
+                <div>
+                    <br>
+                    <% if (user.role==1) { %>
+                        <b>Role: System Admin</b>
+                        <% } else if (user.role==2) { %>
+                            <b>Role: STS Manager</b>
+                            <% } else if (user.role==3) { %>
+                                <b>Role: Landfill Manager</b>
+                                <% } else { %>
+                                    <b>Role: Unassigned User</b>
+                                    <% } %>
+                </div>
+                <br>
+                <button class="btn btn-dark edit-btn">Update Profile</button>
+            </form>
+            <hr />
+        </div>
+    </body>
