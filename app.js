@@ -38,12 +38,23 @@ const vehicleCollection = require("./models/vehiclesModel.js");
 
 // Define middleware to set LoggedIn variable
 app.use((req, res, next) => {
-    res.locals.LoggedIn = true;
-    res.locals.roles = 1;
+    if (req.session.user) {
+        res.locals.LoggedIn = true;
+        res.locals.roles = 1;
+    }
+    else {
+        res.locals.LoggedIn = false;
+        res.locals.roles = 0;
+    }
     next();
 });
 
-app.get('/profile',(req,res)=>{
+app.get("/profile", (req, res)=>{
+    const user = req.session.user;
+    res.render("personalProfile.ejs", {user});
+});
+
+app.get('/upd_profile',(req,res)=>{
     const user = req.session.user;
     // return res.send(user);
     res.render('profile.ejs' , {user});
@@ -69,15 +80,15 @@ app.get("/home", async(req, res)=>{
             curCost = 0;
             if (vehicle.vehicle_type==="Truck") {
                 // 3 ton
-                curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 3;
+                curCost += vehicle.unloaded + (3/5.0) * (vehicle.loaded - vehicle.unloaded) * 3;
             }
             else if (vehicle.vehicle_type=="Compactor") {
                 // 7 ton
-                curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 7;
+                curCost += vehicle.unloaded + (3/5.0) * (vehicle.loaded - vehicle.unloaded) * 7;
             }
             else {
                 // 5 ton
-                curCost += vehicle.unloaded + (3/5) * (vehicle.loaded - vehicle.unloaded) * 5;
+                curCost += vehicle.unloaded + (3/5.0) * (vehicle.loaded - vehicle.unloaded) * 5;
             }
         }
         totalCost += curCost * curDist;

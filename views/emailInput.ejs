@@ -2,13 +2,13 @@
 
     <body>
         <div class="container">
-            <h2 class="mt-5 mb-4">Forgot Password</h2>
-            <form action="/auth/sendMail" method="post">
+            <h3 class="mt-5 mb-4">For change/reset Password Enter Email Address</h3>
+            <form action="/auth/reset-password/confirm" method="get">
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" name="email" id="email" class="form-control" placeholder="E-mail" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Send Mail for restore your password</button>
+                <button type="submit" class="btn btn-primary">Send Mail</button>
             </form>
             <div style="margin-bottom: 200px;"></div>
         </div>

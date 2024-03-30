@@ -11,12 +11,15 @@ const nodemailer = require('nodemailer');
 
 
 // emailInput Take route for change password...
-router.get('/changePassword', (req, res)=>{
+router.get('/reset-password/initiate', (req, res)=>{
     res.render("emailInput.ejs");
 });
 
 // send email Route...
-router.post('/sendMail', async(req, res)=>{
+router.get('/reset-password/confirm', async(req, res)=>{
+    const {email} = req.query;
+    console.log(email);
+    // return res.send("come params ");
     // set this sendMail otp as null...
     // const updatedUser = await User.findOneAndUpdate(
     //     { email: req.body.email }, // Filter: find user by email
@@ -52,14 +55,14 @@ router.post('/sendMail', async(req, res)=>{
     // console.log(req.)
 
     const updatedUser = await User.findOneAndUpdate(
-        { email: req.body.email }, // Filter: find user by email
+        { email: email }, // Filter: find user by email
         { otp: otp }, // Update: set the new OTP
         { new: true } // Options: return the updated document
     );
     
-    const toEmail = req.body.email;
+    const toEmail = email;
     // const toEmail = "azizurcsebsmrstu@gmail.com" ;
-    console.log(req.body.email, process.env.EMAIL_USERNAME);
+    console.log(email, process.env.EMAIL_USERNAME);
     const mailOptions = {
         from: process.env.EMAIL_USERNAME, // Sender address
         to: toEmail, // List of recipients
@@ -67,34 +70,46 @@ router.post('/sendMail', async(req, res)=>{
         text: `Your OTP code is ${otp}` // Plain text body
     };
     
-    transport.sendMail(mailOptions, function(err, info) {
-        if (err) {
-            console.log("error is => " + err.message);
-        } else {
-            console.log("send mail successfully!");
-        }
-    });
+    // transport.sendMail(mailOptions, function(err, info) {
+    //     if (err) {
+    //         console.log("error is => " + err.message);
+    //     } else {
+    //         console.log("send mail successfully!");
+    //     }
+    // });
 
 
     // then otp input form render...
-    res.render("OTPtakenForm.ejs");
+    res.render("passwordAndOtpTakenForm.ejs");
 });
 
-router.post("/verifyOTP", async(req, res)=>{
-    console.log(req.body.otp, req.body.email);
+router.post("/reset-password/confirm", async(req, res)=>{
+    console.log(req.body.otp, req.body.email, req.body.email);
     // res.send(req.body.otp);
     let user = await User.findOne({email: req.body.email});
     console.log(user);
     // const otp = req.body.otp;
     if (req.body.otp == user.otp) {
-        res.render("changePassword.ejs");
+        const password = req.body.password;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const updatedUser = await User.findOneAndUpdate(
+            { email: req.body.email }, // Filter: find user by email
+            { password: hashedPassword }, // Update: set the new OTP
+            { new: true } // Options: return the updated document
+        );
+        return res.redirect("/home");
     }
     else {
-        res.redirect('/auth/changePassword');
+        // alert("Failed!");
+        res.redirect('/auth/login');
     }
 });
 
-router.post("/changepass", async(req, res)=> {
+router.get("/change-password", (req, res)=>{
+    res.render("changePassword.ejs");
+});
+
+router.post("/change-password", async(req, res)=> {
     const password = req.body.password;
     const hashedPassword = await bcrypt.hash(password, 10);
     const updatedUser = await User.findOneAndUpdate(
@@ -102,7 +117,9 @@ router.post("/changepass", async(req, res)=> {
         { password: hashedPassword }, // Update: set the new OTP
         { new: true } // Options: return the updated document
     );
-    return res.send(updatedUser);
+    req.session.user = updatedUser;
+    res.redirect("/profile");
+    // return res.send(updatedUser);
     // res.send("updated password");
 })
 
@@ -189,6 +206,13 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         res.status(500).send('Login failed');
     }
+});
+
+
+router.get('/logout', async(req, res)=>{
+    req.session.user = null;
+    // return res.send("ok");
+    res.redirect("/home");
 });
 
 
