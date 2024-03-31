@@ -131,7 +131,7 @@ router.post("/change-password", isLoggedInn, async(req, res)=> {
     console.log(user);
     console.log(email, password, npassword);
     // return res.send(req.body);
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(npassword, 10);
     const updatedUser = await User.findOneAndUpdate(
         { email: req.body.email }, // Filter: find user by email
         { password: hashedPassword }, // Update: set the new OTP
