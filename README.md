@@ -1,12 +1,14 @@
 # project setup instruction...
 
 ## git clone code:
-
+```cpp
 git clone https://github.com/Abdul-Aziz026/cs24-p2-BSMRSTU_FUSINGBRILLIANCE.git
+```
 
 ## required install package command
+```cpp
 npm i
-
+```
 
 
 
@@ -20,5 +22,7 @@ EMAIL_PASSWORD=<email 2nd step verification password>
 
 
 ## server run command
+```cpp
 npm start
+```
 
