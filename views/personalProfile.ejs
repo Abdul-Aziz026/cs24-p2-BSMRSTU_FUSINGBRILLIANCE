@@ -7,7 +7,7 @@
                 <h2>User Profile</h2>
                 <div class="image">
                     <img class="rounded-circle" style="height: 100px; width: 100px"
-                        src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg"
+                        src="https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=360&t=st=1711860571~exp=1711861171~hmac=4f6794cfa013617ba45ce7b2d216996b5c7c2631371bbd64e5a344de84c77809"
                         alt="User Profile">
                 </div>
                 <div class="profile-info">
@@ -22,11 +22,22 @@
                 </div>
                 <div class="profile-info">
                     <p><strong>Role:</strong>
-                        <%= user.role %>
+                        <% if (user.role===1) { %>
+                            Admin System
+                            <% } else if (user.role===2) { %>
+                                STS Manager
+                                <% } else if (user.role===3) { %>
+                                    Landfill Manager
+                                    <% } else if (user.role===4) { %>
+                                        Unassigned User
+                                        <% } else { %>
+                                            Unknown Role
+                                            <% } %>
                     </p>
                 </div>
-                <form action="/users/<%=user._id %>/p" method="get">
-                    <button type="submit" class="btn btn-primary">Edit Profile</button>
+                <br>
+                <form action="/users/edit/<%= user._id %>" method="get">
+                    <button type="submit" class="btn btn-primary">Edit profile</button>
                 </form>
                 <br>
                 <form action="/auth/change-password" method="get">
@@ -37,5 +48,3 @@
         </div>
 
     </body>
-
-    </html>

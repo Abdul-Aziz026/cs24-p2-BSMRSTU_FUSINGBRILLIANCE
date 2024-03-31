@@ -26,6 +26,8 @@ app.set("views", path.join(__dirname, "/views"));
 // for serving public folder css file all place
 app.use(express.static(path.join(__dirname, "/public")));
 
+app.use(bodyParser.json());
+app.use(express.urlencoded({extended: true}));
 
 // app.use('/users/:userId/p', (req, res) => {
 //     // return res.send("okkk");
@@ -39,29 +41,18 @@ app.use(express.static(path.join(__dirname, "/public")));
 // });
 
 
-// PUT route handler
-app.put('/users/:userId/p', (req, res) => {
-    const userId = req.params.userId; // Get the userId from URL parameter
-    const { name, email } = req.body; // Get name and email from request body
-  
-    // Perform any necessary validation or processing here
-    // For now, let's just send back a response with the received data
-    return res.json({ userId, name, email });
-});
-
 app.use(session({
     secret: 'your_secret_key',
     resave: false,
     saveUninitialized: false
 }));
 
-app.use(bodyParser.json());
-app.use(express.urlencoded({extended: true}));
 
 
 const WasteCollection = require("./models/waste_collectionModel.js");
 const StsCollection = require("./models/stsModel.js");
 const vehicleCollection = require("./models/vehiclesModel.js");
+const User = require("./models/userModel");
 
 // Define middleware to set LoggedIn variable
 app.use((req, res, next) => {
@@ -74,6 +65,12 @@ app.use((req, res, next) => {
         res.locals.roles = 0;
     }
     next();
+});
+
+app.get("/users/edit/:role_id", async(req, res)=>{
+    const role_id = req.params.role_id;
+    const user = await User.findOne({ _id: role_id });
+    return res.render("editProfile.ejs",{user});
 });
 
 app.get("/profile", (req, res)=>{
