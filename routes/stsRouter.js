@@ -2,15 +2,39 @@ const express = require('express');
 const STS = require("../models/stsModel.js");
 const router = express.Router();
 
+const systemAdmin = require("../systemAdminMiddleware.js");
+
+router.get("/createSts", systemAdmin, (req, res)=>{
+    res.render("createSts.ejs");
+});
+
 // POST route to create a new STS entry
 router.post('/', async (req, res) => {
+    // return res.send("comeeeeee");
     try {
-        const newSTS = new STS(req.body);
+        // res.send(req.body);
+        const newSTS = new STS({
+            ward_no: req.body.ward_no,
+            capacity: req.body.capacity,
+            gps_location: {
+                x: req.body.gps_location_x,
+                y: req.body.gps_location_y
+            },
+            sts_mgr_id: req.body.sts_mgr_id
+        });
+    
+        newSTS.sts_id = newSTS._id;
+        // return res.send(newSTS);
+        // return res.send(newSTS);
         const savedSTS = await newSTS.save();
-        res.status(201).json(savedSTS);
+
+        res.redirect("/myhome");
+        // res.status(201).json(savedSTS);
     } catch (error) {
-        console.error('Error saving STS:', error);
-        res.status(500).json({ error: 'Could not save STS data' });
+        console.log(error.message);
+        const success = 0;
+        const alert = "Sts Create failed..!!!";
+        return res.render("alert.ejs", {alert, success});
     }
 });
 

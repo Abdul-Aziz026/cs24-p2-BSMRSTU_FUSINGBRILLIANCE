@@ -121,4 +121,9 @@ router.delete('/:id', getWasteCollection, async (req, res) => {
     }
 });
 
+router.use('*',(req,res)=>{
+    res.send('404! your page is not found');
+});
+
+
 module.exports = router;

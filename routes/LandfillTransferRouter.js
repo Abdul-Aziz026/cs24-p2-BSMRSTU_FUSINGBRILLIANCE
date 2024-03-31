@@ -1,6 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const LandfillTransfer = require('../models/LandfillTransferModel.js');
+const isStytemAdmin = require("../systemAdminMiddleware.js");
+
+router.get("/createLandFill", isStytemAdmin, (req, res)=> {
+    res.render("landFillCreate.ejs");
+});
+
+const Land = require("../models/landFillModel.js");
+
+router.post("/createLandFill", isStytemAdmin, async(req, res)=> {
+    // return res.send("come...");
+    // return res.send(req.body);
+    const newLand = new Land({
+        capacity: req.body.capacity,
+        gps_location: {
+            x: req.body.gps_location_x,
+            y: req.body.gps_location_y
+        }
+    });
+    const rest = await newLand.save();
+    res.redirect("/myhome");
+    // res.send(rest);
+});
 
 // Route to create a new landfill transfer entry
 router.post('/', async (req, res) => {

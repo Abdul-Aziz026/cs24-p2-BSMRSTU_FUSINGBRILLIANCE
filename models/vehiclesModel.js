@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const VechicleSchema = new Schema({
+    registrationNo: {
+        type: Number,
+        required: true
+    },
     vehicle_type:{
         type:String,
         required:true

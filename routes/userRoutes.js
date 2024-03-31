@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 // Parse JSON bodies for this application
 
 const nodemailer = require('nodemailer');
+const isLoggedInn = require("../loggedInMiddleware.js");
 
 
 // emailInput Take route for change password...
@@ -70,13 +71,13 @@ router.get('/reset-password/confirm', async(req, res)=>{
         text: `Your OTP code is ${otp}` // Plain text body
     };
     
-    // transport.sendMail(mailOptions, function(err, info) {
-    //     if (err) {
-    //         console.log("error is => " + err.message);
-    //     } else {
-    //         console.log("send mail successfully!");
-    //     }
-    // });
+    transport.sendMail(mailOptions, function(err, info) {
+        if (err) {
+            console.log("error is => " + err.message);
+        } else {
+            console.log("send mail successfully!");
+        }
+    });
 
 
     // then otp input form render...
@@ -87,7 +88,10 @@ router.post("/reset-password/confirm", async(req, res)=>{
     console.log(req.body.otp, req.body.email, req.body.email);
     // res.send(req.body.otp);
     let user = await User.findOne({email: req.body.email});
-    console.log(user);
+    if (!user) {
+        return res.redirect("/auth/login");
+    }
+    console.log("user => ", user, req.body.email);
     // const otp = req.body.otp;
     if (req.body.otp == user.otp) {
         const password = req.body.password;
@@ -105,12 +109,28 @@ router.post("/reset-password/confirm", async(req, res)=>{
     }
 });
 
-router.get("/change-password", (req, res)=>{
+router.get("/change-password", isLoggedInn, (req, res)=>{
     res.render("changePassword.ejs");
 });
 
-router.post("/change-password", async(req, res)=> {
-    const password = req.body.password;
+router.post("/change-password", isLoggedInn, async(req, res)=> {
+
+    const {email, password, npassword} = req.body;
+    const user = await User.findOne({email: email});
+    if (!user) {
+        const success = 0;
+        const alert = "Your Mail doesn't match!!!";
+        return res.render("alert.ejs", {alert, success});
+    }
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+        const success = 0;
+        const alert = "Your Old password doesn't match!!!";
+        return res.render("alert.ejs", {alert, success});
+    }
+    console.log(user);
+    console.log(email, password, npassword);
+    // return res.send(req.body);
     const hashedPassword = await bcrypt.hash(password, 10);
     const updatedUser = await User.findOneAndUpdate(
         { email: req.body.email }, // Filter: find user by email
@@ -118,7 +138,11 @@ router.post("/change-password", async(req, res)=> {
         { new: true } // Options: return the updated document
     );
     req.session.user = updatedUser;
-    res.redirect("/profile");
+    
+    const success = 1;
+    const alert = "Your Password Changed Succesfully!!!";
+    return res.render("alert.ejs", {alert, success});
+    // res.redirect("/profile");
     // return res.send(updatedUser);
     // res.send("updated password");
 })
@@ -184,34 +208,7 @@ router.post('/login', async (req, res) => {
         req.session.user = user;
         console.log("user = ", user);
         console.log("end.......");
-        // console.log("what happen");
-        // return res.redirect("/home");
-        // res.status(200).json({ token });
-        if (user.role == 1) {
-            // console.log(1, user.role);
-            res.render("systemAdmin.ejs");
-            // res.redirect("/home");
-            // res.send("system Admin");
-        }
-        else if (user.role == 2) {
-            // res.render("systemAdmin.ejs");
-            // console.log(2, user.role);
-            // res.redirect("/home");
-            res.render("sts_manager.ejs");
-            // res.redirect("/home");
-            // res.send("STS Manager Page");
-            // res.render('sts_manager.ejs',  {user});
-        }
-        else if (user.role == 3) {
-            res.render("landFillManager.ejs");
-            // res.redirect("/home");
-        }
-        else {
-            res.redirect("/profile");
-            // res.redirect("/home");
-        //     req.session.user = user;
-        //     res.render('unassigned.ejs',  {user});
-        }
+        res.redirect("/myhome");
     } catch (error) {
         res.status(500).send('Login failed');
     }
@@ -221,7 +218,7 @@ router.post('/login', async (req, res) => {
 router.get('/logout', async(req, res)=>{
     req.session.user = null;
     // return res.send("ok");
-    res.redirect("/home");
+    res.redirect("/auth/login");
 });
 
 
@@ -234,7 +231,7 @@ router.get('/', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-router.get('/:role_id', async (req, res) => {
+router.get('/:role_id', async (req, res, next) => {
     try {
         const role_id = req.params.role_id;
         const user = await User.findOne({ _id: role_id });
@@ -243,12 +240,11 @@ router.get('/:role_id', async (req, res) => {
         }
         res.json(user);
     } catch (err) {
-        console.error('Error fetching user:', err);
-        res.status(500).send('Internal Server Error');
+        next();
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const { name, password, email, role } = req.body;
@@ -266,14 +262,13 @@ router.put('/:id', async (req, res) => {
 
         res.json(updatedUser);
     } catch (err) {
-        console.error('Error updating user:', err);
-        res.status(500).send('Internal Server Error');
+        next();
     }
 });
 
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const deletedUser = await User.findByIdAndDelete(id);
@@ -284,8 +279,12 @@ router.delete('/:id', async (req, res) => {
 
         res.json({ message: 'User deleted successfully' });
     } catch (err) {
-        console.error('Error deleting user:', err);
-        res.status(500).send('Internal Server Error');
+        next();
     }
 });
+
+router.use('*',(req,res)=>{
+    res.send('404! your page is not found');
+});
+
 module.exports = router;

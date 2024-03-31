@@ -67,13 +67,18 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/users/edit/:role_id", async(req, res)=>{
+
+const isStytemAdmin = require("./systemAdminMiddleware.js");
+
+const isLogged = require("./loggedInMiddleware.js");
+
+app.get("/users/edit/:role_id", isLogged, async(req, res)=>{
     const role_id = req.params.role_id;
     const user = await User.findOne({ _id: role_id });
     return res.render("editProfile.ejs",{user});
 });
 
-app.get("/profile", (req, res)=>{
+app.get("/profile", isLogged, (req, res)=>{
     const user = req.session.user;
     res.render("personalProfile.ejs", {user});
 });
@@ -121,6 +126,8 @@ app.get("/home", async(req, res)=>{
     res.render("dash.ejs", {totalWaste, totalFuel, totalCost});
 });
 
+
+// const isStsManager = require("../stsManagerMiddleware.js");
 app.get("/myhome", (req, res)=>{
     const user = req.session.user;
     if (!user) return res.redirect("/auth/login");
@@ -151,14 +158,14 @@ app.get("/myhome", (req, res)=>{
 
 // //user route...
 const UserRoute = require('./routes/userRoutes.js');
-app.use('/auth' , UserRoute);
+app.use('/auth' , UserRoute );
 
 // vehicle route....
 const vehicleRoute = require('./routes/vehiclesRoute.js');
 app.use('/vehicles', vehicleRoute);
 
 const userRoute = require("./routes/userRoute.js");
-app.use("/users", userRoute);
+app.use("/users", isStytemAdmin, userRoute);
 
 // sts route....
 const stsRoutes = require('./routes/stsRouter.js');
@@ -171,6 +178,9 @@ app.use('/waste_collection', wasteCollectionRoute);
 // Landfill transfar route....
 const LandfillTransferRoute = require('./routes/LandfillTransferRouter.js');
 app.use('/landfill_transfer', LandfillTransferRoute);
+app.use('*',(req,res)=>{
+    res.send('404! your page is not found');
+});
 
 app.listen(8000, () => {
     console.log('8000 page listen')

@@ -12,33 +12,6 @@ const nodemailer = require('nodemailer');
 //     // next();
 // });
 
-router.post('/:id', async (req, res) => {
-    console.log('put method call');
-    try {
-        const userId = req.params.id;
-        const { name, email } = req.body;
-
-        // Find the user by ID
-        let user = await User.findById(userId);
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Update the user's information
-        user.name = name || user.name;
-        user.email = email || user.email;
-         console.log('yes')
-        // Save the updated user
-        user = await user.save();
-        req.session.user = user;
-        return res.redirect('/profile') 
-    } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-});
-
 // router.post('/', async (req, res) => {
 //     try {
 //         const { name, password, email, role } = req.body;
@@ -112,11 +85,46 @@ router.get('/roles',(req,res)=>{
      res.render('user_role.ejs',{});
 });
 
+
+router.get('/createUser', (req, res) => {
+    res.render('create_user.ejs');
+});
+
 router.get("/:role_id/p", async(req, res)=>{
     const role_id = req.params.role_id;
     const user = await User.findById(role_id);
     res.render("userProfileUpd.ejs", {user});
 });
+
+
+router.post('/:id', async (req, res) => {
+    // return res.send(req.body);
+    // console.log('put method call');
+    try {
+        const userId = req.params.id;
+        const { name, email } = req.body;
+
+        // Find the user by ID
+        let user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Update the user's information
+        user.name = name || user.name;
+        user.email = email || user.email;
+         console.log('yes')
+        // Save the updated user
+        user = await user.save();
+        req.session.user = user;
+        return res.redirect('/profile') 
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 
 router.put('/:id/roles', async (req, res) => {
     console.log("coming,,,,");
@@ -242,10 +250,7 @@ router.delete('/:id', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
- 
-router.post('/createUser', (req, res) => {
-    res.render('create_user.ejs');
-});
+
  
  
 module.exports = router;
