@@ -101,7 +101,7 @@ router.post("/reset-password/confirm", async(req, res)=>{
             { password: hashedPassword }, // Update: set the new OTP
             { new: true } // Options: return the updated document
         );
-        return res.redirect("/home");
+        return res.redirect("/auth/login");
     }
     else {
         // alert("Failed!");
@@ -193,11 +193,11 @@ router.post('/login', async (req, res) => {
         // console.log(user);
         // return res.send('got');
         if (!user) {
-            return res.status(401).json({ error: 'Authentication failed' });
+            return res.redirect("/auth/login");
         }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            return res.status(401).json({ error: 'Authentication failed' });
+            return res.redirect("/auth/login");
         }
         const token = jwt.sign({ userId: user._id }, 'your-secret-key', {
             expiresIn: '1h',
@@ -210,7 +210,7 @@ router.post('/login', async (req, res) => {
         console.log("end.......");
         res.redirect("/myhome");
     } catch (error) {
-        res.status(500).send('Login failed');
+        res.redirect("/auth/login");
     }
 });
 
