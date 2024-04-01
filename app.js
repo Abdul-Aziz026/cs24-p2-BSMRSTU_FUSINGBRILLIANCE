@@ -27,17 +27,6 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: true}));
 
-// app.use('/users/:userId/p', (req, res) => {
-//     // return res.send("okkk");
-
-//     const userId = req.params.userId; // Get the userId from URL parameter
-//     const { name, email } = req.query; // Get name and email from query parameters
-//     console.log(name, email);
-//     // Perform any necessary validation or processing here
-//     // For now, let's just send back a response with the received data
-//     res.json({ userId, name, email });
-// });
-
 
 app.use(session({
     secret: 'your_secret_key',
