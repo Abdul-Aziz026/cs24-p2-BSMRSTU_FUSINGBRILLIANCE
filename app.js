@@ -75,20 +75,21 @@ app.get('/upd_profile',(req,res)=>{
     // return res.send(user);
     res.render('profile.ejs' , {user});
 });
-
-app.get("/home", async(req, res)=>{
+const homeAccess = require("./homePageAccessMiddleWare.js");
+app.get("/home", homeAccess, async(req, res)=>{
     // res.render("dashBoard.ejs");
     const totWaste = await WasteCollection.find();
     let totalWaste = 0, totalFuel = 0, totalCost = 0;
     for (waste of totWaste) {
         totalWaste += waste.waste_volume;
         const sts = await StsCollection.findOne({sts_id: waste.sts_id});
-        let curDist = 0;
+        let curDist = 1;
         if (sts && sts.length > 0) {
+            curDist = 0;
             console.log(sts);
             curDist = sts.gps_location.x + sts.gps_location.y ;
-            totalFuel += curDist;
         }
+        totalFuel += curDist;
         const vehicle = await vehicleCollection.findById(sts.vehile_id);
         // console.log("vehicle : ", vehicle);
         let curCost = 1;
@@ -102,9 +103,12 @@ app.get("/home", async(req, res)=>{
                 // 7 ton
                 curCost += vehicle.unloaded + (3/5.0) * (vehicle.loaded - vehicle.unloaded) * 7;
             }
-            else {
+            else if (vehicle.vehicle_type=="Dump Truck"){
                 // 5 ton
                 curCost += vehicle.unloaded + (3/5.0) * (vehicle.loaded - vehicle.unloaded) * 5;
+            }
+            else {
+                curCost += vehicle.unloaded + (3/5.0) * (vehicle.loaded - vehicle.unloaded) * 15;
             }
         }
         totalCost += curCost * curDist;

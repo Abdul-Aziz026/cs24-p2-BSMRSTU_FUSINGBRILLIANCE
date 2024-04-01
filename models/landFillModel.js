@@ -17,7 +17,7 @@ const LanSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    sts_mgr_id: {
+    landfill_mgr_id: {
         type: String,
         default: null
     },
