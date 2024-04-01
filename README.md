@@ -11,7 +11,6 @@ npm i
 ```
 
 
-
 ## .env file database connection setup info...
 ## sample file of .env file
 ```cpp
